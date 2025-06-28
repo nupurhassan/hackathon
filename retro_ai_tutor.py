@@ -17,7 +17,7 @@ def add_xp(points):
     user_stats["level"] = calculate_level(user_stats["xp"])
     return user_stats
 
-# Custom CSS for retro AI tutor aesthetic
+# Custom CSS for retro AI tutor aesthetic with floating UFOs
 custom_css = """
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
@@ -41,6 +41,135 @@ custom_css = """
     border: none !important;
     min-height: 100vh !important;
     position: relative !important;
+}
+
+/* Floating UFOs */
+.gradio-container .ufo-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.gradio-container .ufo {
+    position: absolute;
+    width: 30px;
+    height: 15px;
+    background: linear-gradient(to bottom, #00ff00, #00cc00);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    box-shadow: 
+        0 0 10px #00ff00,
+        0 -3px 0 #00ff00,
+        0 3px 0 rgba(0, 255, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    animation: float-ufo 8s ease-in-out infinite;
+}
+
+.gradio-container .ufo::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 8px;
+    background: linear-gradient(to bottom, #00ff00, #00aa00);
+    border-radius: 50%;
+    box-shadow: 0 0 5px #00ff00;
+}
+
+.gradio-container .ufo::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: radial-gradient(ellipse, rgba(0, 255, 0, 0.3), transparent);
+    border-radius: 50%;
+    animation: beam-pulse 2s ease-in-out infinite;
+}
+
+.gradio-container .ufo-1 {
+    top: 15%;
+    left: 10%;
+    animation: float-ufo-1 12s ease-in-out infinite;
+    animation-delay: 0s;
+}
+
+.gradio-container .ufo-2 {
+    top: 25%;
+    right: 15%;
+    animation: float-ufo-2 15s ease-in-out infinite;
+    animation-delay: -2s;
+    transform: scale(0.8);
+}
+
+.gradio-container .ufo-3 {
+    top: 45%;
+    left: 5%;
+    animation: float-ufo-3 18s ease-in-out infinite;
+    animation-delay: -5s;
+    transform: scale(1.2);
+}
+
+.gradio-container .ufo-4 {
+    top: 60%;
+    right: 8%;
+    animation: float-ufo-4 10s ease-in-out infinite;
+    animation-delay: -3s;
+    transform: scale(0.6);
+}
+
+.gradio-container .ufo-5 {
+    top: 80%;
+    left: 20%;
+    animation: float-ufo-5 14s ease-in-out infinite;
+    animation-delay: -7s;
+    transform: scale(0.9);
+}
+
+@keyframes float-ufo-1 {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(30px, -20px) rotate(5deg); }
+    50% { transform: translate(-20px, 15px) rotate(-3deg); }
+    75% { transform: translate(15px, -10px) rotate(2deg); }
+}
+
+@keyframes float-ufo-2 {
+    0%, 100% { transform: scale(0.8) translate(0, 0) rotate(0deg); }
+    33% { transform: scale(0.8) translate(-40px, 25px) rotate(-8deg); }
+    66% { transform: scale(0.8) translate(25px, -15px) rotate(6deg); }
+}
+
+@keyframes float-ufo-3 {
+    0%, 100% { transform: scale(1.2) translate(0, 0) rotate(0deg); }
+    20% { transform: scale(1.2) translate(50px, 30px) rotate(10deg); }
+    40% { transform: scale(1.2) translate(-30px, -20px) rotate(-5deg); }
+    60% { transform: scale(1.2) translate(40px, 10px) rotate(7deg); }
+    80% { transform: scale(1.2) translate(-20px, 25px) rotate(-3deg); }
+}
+
+@keyframes float-ufo-4 {
+    0%, 100% { transform: scale(0.6) translate(0, 0) rotate(0deg); }
+    50% { transform: scale(0.6) translate(-60px, -30px) rotate(-12deg); }
+}
+
+@keyframes float-ufo-5 {
+    0%, 100% { transform: scale(0.9) translate(0, 0) rotate(0deg); }
+    25% { transform: scale(0.9) translate(-35px, -25px) rotate(-6deg); }
+    50% { transform: scale(0.9) translate(45px, 20px) rotate(4deg); }
+    75% { transform: scale(0.9) translate(-25px, 35px) rotate(-2deg); }
+}
+
+@keyframes beam-pulse {
+    0%, 100% { opacity: 0.3; transform: translateX(-50%) scaleY(1); }
+    50% { opacity: 0.6; transform: translateX(-50%) scaleY(1.2); }
 }
 
 /* Additional falling stars layers */
@@ -398,6 +527,18 @@ custom_css = """
 }
 """
 
+# Add UFO HTML injection function
+def inject_ufos():
+    return """
+    <div class="ufo-container">
+        <div class="ufo ufo-1"></div>
+        <div class="ufo ufo-2"></div>
+        <div class="ufo ufo-3"></div>
+        <div class="ufo ufo-4"></div>
+        <div class="ufo ufo-5"></div>
+    </div>
+    """
+
 # Functions for different features
 def start_tutor():
     return {
@@ -496,6 +637,9 @@ def get_stats():
 
 # Create the Gradio interface
 with gr.Blocks(css=custom_css, title="RETRO AI TUTOR") as demo:
+
+    # Add UFO HTML elements
+    gr.HTML(inject_ufos())
 
     # Page 1: Landing Page
     with gr.Column(visible=True) as page_1:
