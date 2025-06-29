@@ -2,13 +2,16 @@ import gradio as gr
 import random
 import requests
 import json
+import numpy as np
+from time import perf_counter
 
 # Global state for user progress
 user_stats = {
     "xp": 0,
     "level": 1,
     "questions_solved": 0,
-    "lessons_completed": 0
+    "lessons_completed": 0,
+    "benchmarks_run": 0
 }
 
 # NVIDIA API Configuration
@@ -45,11 +48,11 @@ def call_nvidia_api(prompt, system_prompt="You are GRIND GLITCH, a helpful AI tu
         return result['choices'][0]['message']['content']
 
     except requests.exceptions.RequestException as e:
-        return f"⚠️ NETWORK ERROR: Connection to AI Oracle failed. Please check your connection and try again.\n\nError details: {str(e)}"
+        return f" NETWORK ERROR: Connection to AI Oracle failed. Please check your connection and try again.\n\nError details: {str(e)}"
     except KeyError as e:
-        return f"⚠️ API ERROR: Unexpected response format from AI Oracle.\n\nError details: {str(e)}"
+        return f" API ERROR: Unexpected response format from AI Oracle.\n\nError details: {str(e)}"
     except Exception as e:
-        return f"⚠️ SYSTEM ERROR: An unexpected error occurred.\n\nError details: {str(e)}"
+        return f" SYSTEM ERROR: An unexpected error occurred.\n\nError details: {str(e)}"
 
 def calculate_level(xp):
     return min(10, (xp // 100) + 1)
@@ -58,6 +61,288 @@ def add_xp(points):
     user_stats["xp"] += points
     user_stats["level"] = calculate_level(user_stats["xp"])
     return user_stats
+
+def spaceship_engine_status():
+    """Monitor real-time GPU acceleration and engine status"""
+    add_xp(25)
+
+    try:
+        import cupy as cp
+        import numpy as np
+        from time import perf_counter
+
+        results = []
+        results.append("🛸 **SPACESHIP ENGINE STATUS MONITOR**")
+        results.append("═" * 55)
+        results.append("")
+
+        # GPU Detection and Basic Info
+        try:
+            gpu_info = cp.cuda.runtime.getDeviceProperties(0)
+            memory_info = cp.cuda.runtime.memGetInfo()
+
+            results.append("🔋 **WARP DRIVE CORE STATUS**")
+            results.append(f"    Engine Model: {gpu_info['name'].decode()}")
+            results.append(f"    Processing Cores: {gpu_info['multiProcessorCount']}")
+            results.append(f"    Max Clock Speed: {gpu_info['clockRate'] // 1000} MHz")
+            results.append("")
+
+            # Memory Status
+            free_mem = memory_info[0] // (1024**3)
+            total_mem = memory_info[1] // (1024**3)
+            used_mem = total_mem - free_mem
+            usage_percent = (used_mem / total_mem) * 100
+
+            results.append("💾 **STELLAR MEMORY BANKS**")
+            results.append(f"    Total Capacity: {total_mem} GB")
+            results.append(f"    Available: {free_mem} GB")
+            results.append(f"    In Use: {used_mem} GB ({usage_percent:.1f}%)")
+
+            # Memory status indicator
+            if usage_percent < 30:
+                mem_status = " OPTIMAL - Ready for Deep Space Missions"
+            elif usage_percent < 70:
+                mem_status = " MODERATE - System Running Efficiently"
+            else:
+                mem_status = " HIGH - Consider Memory Optimization"
+
+            results.append(f"   📊 Status: {mem_status}")
+            results.append("")
+
+        except Exception as e:
+            results.append("⚠️ **WARP DRIVE OFFLINE**")
+            results.append("   CPU-only navigation mode active")
+            results.append("")
+
+        # Acceleration Test
+        results.append("⚡ **LIVE ACCELERATION TEST**")
+        try:
+            # Quick performance test
+            size = 1024
+            A_cpu = np.random.rand(size, size).astype(np.float32)
+            B_cpu = np.random.rand(size, size).astype(np.float32)
+
+            # CPU test
+            start_time = perf_counter()
+            C_cpu = np.matmul(A_cpu, B_cpu)
+            cpu_time = perf_counter() - start_time
+
+            # GPU test
+            A_gpu = cp.array(A_cpu)
+            B_gpu = cp.array(B_cpu)
+
+            start_time = perf_counter()
+            C_gpu = cp.matmul(A_gpu, B_gpu)
+            cp.cuda.Device().synchronize()
+            gpu_time = perf_counter() - start_time
+
+            speedup = cpu_time / gpu_time
+
+            results.append(f"    CPU Engine: {cpu_time:.4f}s")
+            results.append(f"    GPU Engine: {gpu_time:.4f}s")
+            results.append(f"    Warp Factor: {speedup:.1f}x acceleration")
+
+            # Engine performance status
+            if speedup >= 20:
+                engine_status = " HYPERDRIVE - Maximum Efficiency"
+            elif speedup >= 10:
+                engine_status = " WARP DRIVE - Excellent Performance"
+            elif speedup >= 5:
+                engine_status = " IMPULSE - Good Acceleration"
+            else:
+                engine_status = " THRUSTER - Basic Propulsion"
+
+            results.append(f"   Engine Class: {engine_status}")
+            results.append("")
+
+            # Cleanup
+            del A_cpu, B_cpu, C_cpu, A_gpu, B_gpu, C_gpu
+
+        except Exception as e:
+            results.append("    Acceleration test failed - Running on backup thrusters")
+            results.append("")
+
+        # Engine Recommendations
+        results.append("🔧 **STELLAR ENGINEERING REPORT**")
+        try:
+            if usage_percent > 80:
+                results.append("    High memory usage detected")
+                results.append("    Recommend closing background processes")
+            elif speedup >= 15:
+                results.append("    Warp drives operating at peak efficiency")
+                results.append("    Ready for advanced computational missions")
+            elif speedup >= 8:
+                results.append("    Good engine performance detected")
+                results.append("    Consider upgrading for maximum acceleration")
+            else:
+                results.append("    Suboptimal acceleration detected")
+                results.append("    Recommend warp drive diagnostics")
+        except:
+            results.append("    GPU acceleration unavailable")
+            results.append("    Install CUDA drivers for warp drive activation")
+
+        results.append("")
+        results.append("═" * 55)
+        results.append(f" **ENGINE MONITOR ACHIEVEMENT!** +25 XP")
+        results.append(f" **Current Rank:** Level {user_stats['level']} | Total XP: {user_stats['xp']}")
+        results.append("═" * 55)
+
+        return "\n".join(results)
+
+    except ImportError:
+        return f"⚠️ **WARP DRIVE MODULES OFFLINE**\n\nEngine monitoring requires stellar libraries:\n- CuPy for GPU acceleration\n- NumPy for backup thrusters\n\nInstall required modules to activate spaceship engines."
+    except Exception as e:
+        return f"⚠️ **ENGINE DIAGNOSTIC ERROR**\n\nUnexpected engine malfunction: {str(e)}\n\nRecommend immediate engineering inspection."
+
+def gpu_benchmark():
+    """Run comprehensive GPU benchmarks and return cosmic-style results"""
+    add_xp(50)
+    user_stats["benchmarks_run"] += 1
+
+    try:
+        import cupy as cp
+        import pandas as pd
+        import numpy as np
+        from time import perf_counter
+
+        results = []
+        results.append("🚀 **STELLAR PERFORMANCE ANALYSIS INITIATED**")
+        results.append("═" * 60)
+        results.append("")
+
+        # GPU Detection
+        try:
+            gpu_info = cp.cuda.runtime.getDeviceProperties(0)
+            results.append(f"🛸 **STARSHIP PROCESSOR DETECTED:** {gpu_info['name'].decode()}")
+            results.append(f"⚡ **ENERGY CORES:** {gpu_info['multiProcessorCount']}")
+            results.append(f"🔋 **MEMORY BANKS:** {gpu_info['totalGlobalMem'] // (1024**3)} GB")
+            results.append("")
+        except:
+            results.append("⚠️ **STARSHIP PROCESSOR STATUS:** OFFLINE")
+            results.append("")
+
+        # CuPy Matrix Operations Benchmark
+        results.append("🎯 **MATRIX COMPUTATION ENGINE TEST**")
+        size = 2048
+
+        # CPU Baseline
+        A_cpu = np.random.rand(size, size).astype(np.float32)
+        B_cpu = np.random.rand(size, size).astype(np.float32)
+
+        start_time = perf_counter()
+        C_cpu = np.matmul(A_cpu, B_cpu)
+        cpu_time = perf_counter() - start_time
+
+        # GPU Acceleration
+        A_gpu = cp.array(A_cpu)
+        B_gpu = cp.array(B_cpu)
+        cp.matmul(A_gpu, B_gpu)  # Warmup
+
+        start_time = perf_counter()
+        C_gpu = cp.matmul(A_gpu, B_gpu)
+        cp.cuda.Device().synchronize()
+        gpu_time = perf_counter() - start_time
+
+        speedup = cpu_time / gpu_time
+        results.append(f"    CPU PROCESSING TIME: {cpu_time:.4f} seconds")
+        results.append(f"    GPU ACCELERATION TIME: {gpu_time:.4f} seconds")
+        results.append(f"    **WARP SPEED BOOST: {speedup:.2f}x FASTER**")
+        results.append("")
+
+        # Memory Bandwidth Test
+        results.append("💾 **STELLAR MEMORY BANDWIDTH ANALYSIS**")
+        data_size = 100_000_000
+        test_data = cp.random.rand(data_size, dtype=cp.float32)
+
+        start_time = perf_counter()
+        result = cp.sum(test_data)
+        cp.cuda.Device().synchronize()
+        bandwidth_time = perf_counter() - start_time
+
+        bandwidth_gb = (data_size * 4) / (bandwidth_time * 1e9)  # GB/s
+        results.append(f"    MEMORY BANDWIDTH: {bandwidth_gb:.2f} GB/s")
+        results.append("")
+
+        # cuDF Data Processing Benchmark
+        results.append("📈 **STELLAR DATA PROCESSING ENGINE TEST**")
+        try:
+            # Enable cudf.pandas acceleration
+            import cudf.pandas
+            cudf.pandas.install()
+
+            n = 1_000_000
+            data = {
+                'stellar_id': np.random.randint(0, 1000, n),
+                'energy_level': np.random.randn(n),
+                'cosmic_flux': np.random.randn(n)
+            }
+
+            df = pd.DataFrame(data)
+
+            start_time = perf_counter()
+            result = df.groupby('stellar_id').agg({
+                'energy_level': ['sum', 'mean'],
+                'cosmic_flux': ['min', 'max']
+            })
+            data_time = perf_counter() - start_time
+
+            results.append(f"    DATA ANALYSIS TIME: {data_time:.4f} seconds")
+            results.append(f"   RECORDS PROCESSED: {n:,} stellar objects")
+            results.append("")
+
+        except ImportError:
+            results.append("    RAPIDS cuDF engine offline - Standard processing active")
+            results.append("")
+
+        # Performance Classification
+        results.append("🏆 **STARSHIP PERFORMANCE CLASSIFICATION**")
+        if speedup >= 50:
+            classification = " HYPERDRIVE CLASS - FEDERATION FLAGSHIP"
+        elif speedup >= 20:
+            classification = " WARP DRIVE CLASS - DEEP SPACE EXPLORER"
+        elif speedup >= 10:
+            classification = " IMPULSE CLASS - SYSTEM PATROL VESSEL"
+        elif speedup >= 5:
+            classification = " THRUSTER CLASS - ORBITAL TRANSPORT"
+        else:
+            classification = " MAINTENANCE CLASS - DOCK FOR UPGRADES"
+
+        results.append(f"   {classification}")
+        results.append("")
+
+        # System Recommendations
+        results.append("🔬 **STELLAR ENGINEERING RECOMMENDATIONS**")
+        if speedup >= 30:
+            results.append("    WARP CORES OPERATING AT PEAK EFFICIENCY")
+            results.append("    READY FOR ADVANCED DEEP LEARNING MISSIONS")
+        elif speedup >= 15:
+            results.append("    EXCELLENT ACCELERATION DETECTED")
+            results.append("    OPTIMAL FOR SCIENTIFIC COMPUTING OPERATIONS")
+        elif speedup >= 8:
+            results.append("    GOOD PERFORMANCE - MINOR OPTIMIZATIONS POSSIBLE")
+            results.append("    CONSIDER MEMORY OPTIMIZATION PROTOCOLS")
+        else:
+            results.append("    SUBOPTIMAL PERFORMANCE DETECTED")
+            results.append("    RECOMMEND WARP CORE DIAGNOSTICS")
+
+        results.append("")
+        results.append("═" * 60)
+        results.append(f" **BENCHMARK MASTER ACHIEVEMENT UNLOCKED!** +50 XP")
+        results.append(f" **CURRENT RANK:** Level {user_stats['level']} | Total XP: {user_stats['xp']}")
+        results.append(f" **BENCHMARKS COMPLETED:** {user_stats['benchmarks_run']}")
+        results.append("═" * 60)
+
+        # Cleanup
+        del A_cpu, B_cpu, C_cpu, A_gpu, B_gpu, C_gpu, test_data
+        if 'df' in locals():
+            del df
+
+        return "\n".join(results)
+
+    except ImportError as e:
+        return f"⚠️ **STELLAR ACCELERATION MODULES OFFLINE**\n\nMissing stellar libraries: {str(e)}\n\nPlease install: cupy, cudf, rapids for full performance analysis."
+    except Exception as e:
+        return f"⚠️ **SYSTEM DIAGNOSTIC ERROR**\n\nUnexpected stellar anomaly detected: {str(e)}\n\nRecommend system recalibration and retry."
 
 # Enhanced CSS for spaceship interior aesthetic with floating UFOs
 custom_css = """
@@ -233,54 +518,6 @@ custom_css = """
     z-index: 1;
 }
 
-/* Floating control panels and HUD elements */
-.gradio-container::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        radial-gradient(2px 2px at 5% 15%, #00ff88, transparent),
-        radial-gradient(1px 1px at 95% 25%, #0088ff, transparent),
-        radial-gradient(3px 3px at 15% 85%, #00ff88, transparent),
-        radial-gradient(2px 2px at 85% 90%, #0088ff, transparent),
-        radial-gradient(1px 1px at 45% 5%, #ff8800, transparent),
-        radial-gradient(2px 2px at 75% 15%, #00ff88, transparent);
-    background-size: 
-        300px 100vh,
-        250px 100vh,
-        350px 100vh,
-        280px 100vh,
-        200px 100vh,
-        320px 100vh;
-    animation: 
-        hud-drift-1 20s linear infinite,
-        hud-drift-2 15s linear infinite;
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.8;
-}
-
-@keyframes hud-drift-1 {
-    0% { transform: translateY(-100vh) translateX(10px); }
-    100% { transform: translateY(100vh) translateX(-30px); }
-}
-
-@keyframes hud-drift-2 {
-    0% { transform: translateY(-100vh) translateX(-15px); }
-    100% { transform: translateY(100vh) translateX(25px); }
-}
-
-/* Main container as spaceship bridge */
-#component-0 {
-    background: transparent !important;
-    border: none !important;
-    min-height: 100vh !important;
-    position: relative !important;
-}
-
 /* Title styling - Main ship computer display */
 .gradio-container h1 {
     color: #00ff88 !important;
@@ -353,7 +590,6 @@ custom_css = """
 
 /* SPACESHIP CONTROL BUTTON STYLING */
 .gradio-container button {
-    /* Base spaceship control panel styling */
     background: 
         linear-gradient(145deg, 
             rgba(0, 255, 136, 0.2) 0%, 
@@ -387,19 +623,12 @@ custom_css = """
     text-transform: uppercase !important;
     letter-spacing: 0.15em !important;
     
-    /* Spaceship control panel effects */
     box-shadow: 
-        /* Main glow */
         0 0 20px rgba(0, 255, 136, 0.4),
-        /* Inner highlight */
         inset 0 2px 0 rgba(255, 255, 255, 0.2),
-        /* Inner shadow */
         inset 0 -2px 0 rgba(0, 0, 0, 0.3),
-        /* Left edge highlight */
         inset 2px 0 0 rgba(0, 255, 136, 0.2),
-        /* Right edge shadow */
         inset -2px 0 0 rgba(0, 0, 0, 0.2),
-        /* Outer depth */
         0 4px 8px rgba(0, 0, 0, 0.3) !important;
     
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -408,7 +637,6 @@ custom_css = """
     margin: 0.8rem !important;
     min-width: 280px !important;
     
-    /* Hexagonal clipping for futuristic look */
     clip-path: polygon(
         10px 0%, 
         calc(100% - 10px) 0%, 
@@ -420,12 +648,10 @@ custom_css = """
         0% 25%
     ) !important;
     
-    /* Control panel texture */
     background-attachment: fixed !important;
     backdrop-filter: blur(2px) !important;
 }
 
-/* LED status indicators on buttons */
 .gradio-container button::before {
     content: '';
     position: absolute;
@@ -457,7 +683,6 @@ custom_css = """
     }
 }
 
-/* Control panel lines on buttons */
 .gradio-container button::after {
     content: '';
     position: absolute;
@@ -482,7 +707,6 @@ custom_css = """
     100% { transform: translateX(100%); opacity: 0; }
 }
 
-/* Hover state - Control activation */
 .gradio-container button:hover {
     background: 
         linear-gradient(145deg, 
@@ -499,17 +723,12 @@ custom_css = """
         ) !important;
     
     box-shadow: 
-        /* Enhanced main glow */
         0 0 35px rgba(0, 255, 136, 0.7),
         0 0 60px rgba(0, 255, 136, 0.4),
-        /* Inner highlight */
         inset 0 3px 0 rgba(255, 255, 255, 0.3),
-        /* Inner shadow */
         inset 0 -3px 0 rgba(0, 0, 0, 0.4),
-        /* Edge effects */
         inset 3px 0 0 rgba(0, 255, 136, 0.3),
         inset -3px 0 0 rgba(0, 0, 0, 0.3),
-        /* Enhanced depth */
         0 6px 12px rgba(0, 0, 0, 0.4) !important;
     
     transform: translateY(-2px) scale(1.02) !important;
@@ -525,7 +744,6 @@ custom_css = """
         ) 1 !important;
 }
 
-/* Active state - Control engaged */
 .gradio-container button:active {
     transform: translateY(1px) scale(0.98) !important;
     box-shadow: 
@@ -540,51 +758,6 @@ custom_css = """
         ) !important;
 }
 
-/* Special start button - Main power control */
-.start-button {
-    font-size: 2.5rem !important;
-    padding: 30px 80px !important;
-    margin: 2rem auto !important;
-    display: block !important;
-    min-width: 400px !important;
-    
-    background: 
-        radial-gradient(ellipse at center, 
-            rgba(0, 255, 136, 0.3) 0%, 
-            rgba(0, 200, 100, 0.4) 30%,
-            rgba(0, 150, 80, 0.5) 60%,
-            rgba(0, 100, 60, 0.3) 100%
-        ),
-        linear-gradient(45deg, 
-            transparent 40%, 
-            rgba(255, 255, 255, 0.15) 50%, 
-            transparent 60%
-        ) !important;
-    
-    box-shadow: 
-        0 0 40px rgba(0, 255, 136, 0.6),
-        0 0 80px rgba(0, 255, 136, 0.3),
-        inset 0 0 30px rgba(0, 255, 136, 0.2) !important;
-    
-    animation: main-power-pulse 4s ease-in-out infinite !important;
-}
-
-@keyframes main-power-pulse {
-    0%, 100% { 
-        box-shadow: 
-            0 0 40px rgba(0, 255, 136, 0.6),
-            0 0 80px rgba(0, 255, 136, 0.3),
-            inset 0 0 30px rgba(0, 255, 136, 0.2);
-    }
-    50% { 
-        box-shadow: 
-            0 0 60px rgba(0, 255, 136, 0.8),
-            0 0 120px rgba(0, 255, 136, 0.5),
-            inset 0 0 50px rgba(0, 255, 136, 0.4);
-    }
-}
-
-/* Stats display - Ship status panel */
 .stats-container {
     background: 
         linear-gradient(135deg, 
@@ -625,7 +798,6 @@ custom_css = """
     text-shadow: 0 0 5px #00ff88 !important;
 }
 
-/* Text areas and inputs - Control interfaces */
 .gradio-container textarea, .gradio-container input {
     background: 
         linear-gradient(135deg, 
@@ -653,7 +825,6 @@ custom_css = """
     color: #00ccff !important;
 }
 
-/* Output styling - Data displays */
 .output-text {
     background: 
         linear-gradient(135deg, 
@@ -676,7 +847,6 @@ custom_css = """
     backdrop-filter: blur(3px) !important;
 }
 
-/* Center content in spaceship bridge layout */
 .gradio-container .contain {
     display: flex !important;
     flex-direction: column !important;
@@ -712,7 +882,6 @@ custom_css = """
     padding: 2rem !important;
 }
 
-/* Control panel grid layout */
 .button-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
@@ -722,81 +891,12 @@ custom_css = """
     padding: 25px !important;
 }
 
-/* Hide gradio branding */
 .footer {
     display: none !important;
 }
 
 .gradio-container .version {
     display: none !important;
-}
-
-/* Achievement notifications - Ship alerts */
-.achievement {
-    background: 
-        linear-gradient(145deg, 
-            rgba(255, 170, 0, 0.9) 0%, 
-            rgba(255, 136, 0, 0.95) 100%
-        ) !important;
-    color: #000 !important;
-    border: 3px solid #ffaa00 !important;
-    border-radius: 12px !important;
-    padding: 18px !important;
-    margin: 12px !important;
-    font-family: 'Orbitron', monospace !important;
-    font-weight: bold !important;
-    text-align: center !important;
-    animation: achievement-alert 0.6s ease-out !important;
-    box-shadow: 
-        0 0 25px #ffaa00,
-        inset 0 0 15px rgba(255, 255, 255, 0.2) !important;
-    backdrop-filter: blur(2px) !important;
-}
-
-@keyframes achievement-alert {
-    0% { 
-        transform: scale(0.7) translateY(30px) rotate(-5deg); 
-        opacity: 0; 
-    }
-    50% { 
-        transform: scale(1.05) translateY(-5px) rotate(1deg); 
-    }
-    100% { 
-        transform: scale(1) translateY(0) rotate(0deg); 
-        opacity: 1; 
-    }
-}
-
-/* Spaceship ambient lighting effects */
-.gradio-container {
-    animation: ambient-lighting 8s ease-in-out infinite !important;
-}
-
-@keyframes ambient-lighting {
-    0%, 100% { 
-        background: 
-            radial-gradient(circle at 20% 30%, rgba(0, 100, 255, 0.1), transparent 40%),
-            radial-gradient(circle at 80% 70%, rgba(0, 255, 150, 0.1), transparent 40%),
-            linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 25%, #16213e 50%, #0f1419 75%, #000000 100%);
-    }
-    25% { 
-        background: 
-            radial-gradient(circle at 30% 20%, rgba(0, 150, 255, 0.12), transparent 40%),
-            radial-gradient(circle at 70% 80%, rgba(0, 255, 100, 0.12), transparent 40%),
-            linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 25%, #16213e 50%, #0f1419 75%, #000000 100%);
-    }
-    50% { 
-        background: 
-            radial-gradient(circle at 80% 30%, rgba(0, 200, 255, 0.08), transparent 40%),
-            radial-gradient(circle at 20% 70%, rgba(0, 255, 200, 0.08), transparent 40%),
-            linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 25%, #16213e 50%, #0f1419 75%, #000000 100%);
-    }
-    75% { 
-        background: 
-            radial-gradient(circle at 70% 20%, rgba(0, 120, 255, 0.1), transparent 40%),
-            radial-gradient(circle at 30% 80%, rgba(0, 255, 120, 0.1), transparent 40%),
-            linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 25%, #16213e 50%, #0f1419 75%, #000000 100%);
-    }
 }
 """
 
@@ -812,7 +912,7 @@ def inject_ufos():
     </div>
     """
 
-# Functions for different features remain the same
+# Functions for different features
 def start_tutor():
     return {
         page_1: gr.update(visible=False),
@@ -826,7 +926,9 @@ def go_back():
         ask_oracle_page: gr.update(visible=False),
         training_page: gr.update(visible=False),
         lesson_page: gr.update(visible=False),
-        challenge_page: gr.update(visible=False)
+        challenge_page: gr.update(visible=False),
+        benchmark_page: gr.update(visible=False),
+        engine_page: gr.update(visible=False)
     }
 
 def show_ask_oracle():
@@ -853,9 +955,21 @@ def show_challenge_creator():
         challenge_page: gr.update(visible=True)
     }
 
+def show_gpu_benchmark():
+    return {
+        page_2: gr.update(visible=False),
+        benchmark_page: gr.update(visible=True)
+    }
+
+def show_spaceship_engine():
+    return {
+        page_2: gr.update(visible=False),
+        engine_page: gr.update(visible=True)
+    }
+
 def ask_ai_tutor(question):
     if not question.strip():
-        return "⚠️ ERROR: Please enter a question to receive wisdom from the AI Oracle!"
+        return " ERROR: Please enter a question to receive wisdom from the AI Oracle!"
 
     add_xp(10)
     user_stats["questions_solved"] += 1
@@ -863,7 +977,7 @@ def ask_ai_tutor(question):
     system_prompt = """You are the AI Oracle, a wise and powerful tutor with a retro gaming personality. 
     
     IMPORTANT GUIDELINES:
-    - Start responses with gaming-style headers like "🔮 PROCESSING QUERY...", "⚡ ANALYSIS COMPLETE", "🚀 KNOWLEDGE SCAN INITIATED"
+    - Start responses with gaming-style headers like " PROCESSING QUERY...", "⚡ ANALYSIS COMPLETE", "🚀 KNOWLEDGE SCAN INITIATED"
     - Use retro gaming terminology and style
     - Be educational and helpful while maintaining the gaming theme
     - End with XP and level information
@@ -900,7 +1014,7 @@ def generate_practice():
 
 def create_lesson(topic):
     if not topic.strip():
-        return "⚠️ ERROR: Please specify a topic for lesson generation!"
+        return " ERROR: Please specify a topic for lesson generation!"
 
     add_xp(25)
     user_stats["lessons_completed"] += 1
@@ -926,7 +1040,7 @@ def create_lesson(topic):
 
 def create_questions(subject):
     if not subject.strip():
-        return "⚠️ ERROR: Please specify a subject for question generation!"
+        return " ERROR: Please specify a subject for question generation!"
 
     add_xp(20)
 
@@ -949,7 +1063,7 @@ def create_questions(subject):
     return ai_response
 
 def get_stats():
-    return f"** SHIP STATUS** \n\n** COMMANDER LEVEL:** {user_stats['level']} \n** TOTAL XP:** {user_stats['xp']} \n** MISSIONS COMPLETED:** {user_stats['questions_solved']} \n** KNOWLEDGE MODULES:** {user_stats['lessons_completed']} \n\n** NEXT RANK:** {(user_stats['level'] * 100) - user_stats['xp']} XP to promotion"
+    return f"🚀 **SHIP STATUS REPORT** \n\n🎖️ **COMMANDER LEVEL:** {user_stats['level']} \n⚡ **TOTAL XP:** {user_stats['xp']} \n🎯 **MISSIONS COMPLETED:** {user_stats['questions_solved']} \n📚 **KNOWLEDGE MODULES:** {user_stats['lessons_completed']} \n🔧 **BENCHMARKS RUN:** {user_stats['benchmarks_run']}\n\n🌟 **NEXT RANK:** {(user_stats['level'] * 100) - user_stats['xp']} XP to promotion"
 
 # Create the Gradio interface
 with gr.Blocks(css=custom_css, title="GRIND GLITCH - INTERSTELLAR LEARNING COMMAND") as demo:
@@ -963,7 +1077,7 @@ with gr.Blocks(css=custom_css, title="GRIND GLITCH - INTERSTELLAR LEARNING COMMA
         gr.Markdown("### INTERSTELLAR LEARNING PROTOCOL ACTIVATED")
         gr.Markdown("*Cosmic support for stellar minds - because you deserve the universe's best education*")
         gr.Markdown("*From distant galaxies, we're here to help you achieve greatness*")
-        gr.Markdown("*Powered by NVIDIA Llama AI Core*")
+        gr.Markdown("*Powered by NVIDIA Llama AI Core & GPU Acceleration*")
 
         start_btn = gr.Button("ACTIVATE GRIND GLITCH", elem_classes=["start-button"], variant="primary")
 
@@ -978,11 +1092,13 @@ with gr.Blocks(css=custom_css, title="GRIND GLITCH - INTERSTELLAR LEARNING COMMA
 
         with gr.Row():
             with gr.Column():
-                oracle_btn = gr.Button("COSMIC ORACLE\n*Stellar answers from across the galaxy*", variant="primary")
-                training_btn = gr.Button("STELLAR TRAINING\n*Because you deserve the best preparation*", variant="primary")
+                oracle_btn = gr.Button("🔮 COSMIC ORACLE\n*Stellar answers from across the galaxy*", variant="primary")
+                training_btn = gr.Button("🎯 STELLAR TRAINING\n*Because you deserve the best preparation*", variant="primary")
+                engine_btn = gr.Button("🛸 SPACESHIP ENGINE\n*Monitor warp drive acceleration*", variant="primary")
             with gr.Column():
-                lesson_btn = gr.Button("KNOWLEDGE FORGE\n*Universe-class custom lessons*", variant="primary")
-                challenge_btn = gr.Button(" COSMIC CHALLENGES\n*Galactic-level practice questions*", variant="primary")
+                lesson_btn = gr.Button("🏗️ KNOWLEDGE FORGE\n*Universe-class custom lessons*", variant="primary")
+                challenge_btn = gr.Button("🎲 COSMIC CHALLENGES\n*Galactic-level practice questions*", variant="primary")
+                benchmark_btn = gr.Button("⚡ STELLAR BENCHMARK\n*Test your starship's processing power*", variant="primary")
 
         back_btn = gr.Button("MAIN CONSOLE", variant="secondary")
 
@@ -1022,7 +1138,7 @@ with gr.Blocks(css=custom_css, title="GRIND GLITCH - INTERSTELLAR LEARNING COMMA
             placeholder="Enter the subject for cosmic knowledge synthesis...",
             lines=2
         )
-        lesson_btn = gr.Button("FORGE STELLAR LESSON", variant="primary")
+        lesson_create_btn = gr.Button("FORGE STELLAR LESSON", variant="primary")
         lesson_output = gr.Markdown("", elem_classes=["output-text"])
 
         back_lesson_btn = gr.Button("RETURN TO COMMAND CENTER", variant="secondary")
@@ -1042,24 +1158,52 @@ with gr.Blocks(css=custom_css, title="GRIND GLITCH - INTERSTELLAR LEARNING COMMA
 
         back_challenge_btn = gr.Button("RETURN TO COMMAND CENTER", variant="secondary")
 
+    # GPU Benchmark Page
+    with gr.Column(visible=False) as benchmark_page:
+        gr.Markdown("## ⚡ GRIND GLITCH STELLAR BENCHMARK")
+        gr.Markdown("### Stellar performance analysis - test your starship's processing power!")
+        gr.Markdown("*Analyzing warp cores and acceleration drives...*")
+
+        run_benchmark_btn = gr.Button("🚀 INITIATE STELLAR ANALYSIS", variant="primary")
+        benchmark_output = gr.Markdown("", elem_classes=["output-text"])
+
+        back_benchmark_btn = gr.Button("RETURN TO COMMAND CENTER", variant="secondary")
+
+    # Spaceship Engine Page
+    with gr.Column(visible=False) as engine_page:
+        gr.Markdown("## 🛸 GRIND GLITCH ENGINE BAY")
+        gr.Markdown("### Real-time warp drive monitoring and acceleration status")
+        gr.Markdown("*Live diagnostics of your starship's computational engines...*")
+
+        monitor_engine_btn = gr.Button("🔍 SCAN ENGINE STATUS", variant="primary")
+        engine_output = gr.Markdown("", elem_classes=["output-text"])
+
+        back_engine_btn = gr.Button("RETURN TO COMMAND CENTER", variant="secondary")
+
     # Event handlers
     start_btn.click(start_tutor, outputs=[page_1, page_2])
 
-    back_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page])
-    back_oracle_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page])
-    back_training_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page])
-    back_lesson_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page])
-    back_challenge_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page])
+    back_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page, benchmark_page, engine_page])
+    back_oracle_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page, benchmark_page, engine_page])
+    back_training_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page, benchmark_page, engine_page])
+    back_lesson_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page, benchmark_page, engine_page])
+    back_challenge_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page, benchmark_page, engine_page])
+    back_benchmark_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page, benchmark_page, engine_page])
+    back_engine_btn.click(go_back, outputs=[page_1, page_2, ask_oracle_page, training_page, lesson_page, challenge_page, benchmark_page, engine_page])
 
     oracle_btn.click(show_ask_oracle, outputs=[page_2, ask_oracle_page])
     training_btn.click(show_training, outputs=[page_2, training_page])
     lesson_btn.click(show_lesson_builder, outputs=[page_2, lesson_page])
     challenge_btn.click(show_challenge_creator, outputs=[page_2, challenge_page])
+    benchmark_btn.click(show_gpu_benchmark, outputs=[page_2, benchmark_page])
+    engine_btn.click(show_spaceship_engine, outputs=[page_2, engine_page])
 
     ask_btn.click(ask_ai_tutor, inputs=[question_input], outputs=[oracle_output])
     generate_btn.click(generate_practice, outputs=[training_output])
-    lesson_btn.click(create_lesson, inputs=[topic_input], outputs=[lesson_output])
+    lesson_create_btn.click(create_lesson, inputs=[topic_input], outputs=[lesson_output])
     create_btn.click(create_questions, inputs=[subject_input], outputs=[challenge_output])
+    run_benchmark_btn.click(gpu_benchmark, outputs=[benchmark_output])
+    monitor_engine_btn.click(spaceship_engine_status, outputs=[engine_output])
 
 if __name__ == "__main__":
     demo.launch(
