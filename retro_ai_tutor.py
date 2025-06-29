@@ -1,5 +1,7 @@
 import gradio as gr
 import random
+import requests
+import json
 
 # Global state for user progress
 user_stats = {
@@ -8,6 +10,46 @@ user_stats = {
     "questions_solved": 0,
     "lessons_completed": 0
 }
+
+# NVIDIA API Configuration
+NVIDIA_API_KEY = "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"
+NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
+
+def call_nvidia_api(prompt, system_prompt="You are a helpful AI tutor with a retro gaming personality. Use terms like 'PROCESSING', 'ANALYSIS COMPLETE', and add gaming elements to your responses."):
+    """Call NVIDIA API with the given prompt"""
+    try:
+        headers = {
+            "Authorization": f"Bearer {NVIDIA_API_KEY}",
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+
+        payload = {
+            "model": "meta/llama-4-maverick-17b-128e-instruct",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt}
+            ],
+            "max_tokens": 512,
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "frequency_penalty": 0.0,
+            "presence_penalty": 0.0,
+            "stream": False
+        }
+
+        response = requests.post(NVIDIA_API_URL, headers=headers, json=payload, timeout=30)
+        response.raise_for_status()
+
+        result = response.json()
+        return result['choices'][0]['message']['content']
+
+    except requests.exceptions.RequestException as e:
+        return f"⚠️ NETWORK ERROR: Connection to AI Oracle failed. Please check your connection and try again.\n\nError details: {str(e)}"
+    except KeyError as e:
+        return f"⚠️ API ERROR: Unexpected response format from AI Oracle.\n\nError details: {str(e)}"
+    except Exception as e:
+        return f"⚠️ SYSTEM ERROR: An unexpected error occurred.\n\nError details: {str(e)}"
 
 def calculate_level(xp):
     return min(10, (xp // 100) + 1)
@@ -582,58 +624,105 @@ def show_challenge_creator():
 
 def ask_ai_tutor(question):
     if not question.strip():
-        return "ERROR: Please enter a question to receive wisdom from the AI Oracle!"
+        return "⚠️ ERROR: Please enter a question to receive wisdom from the AI Oracle!"
 
     # Add XP for asking questions
     add_xp(10)
     user_stats["questions_solved"] += 1
 
-    responses = [
-        f"PROCESSING QUERY... \n\n**AI ORACLE RESPONSE:** \n\nYour question '{question}' is an excellent inquiry! Let me break this down for you:\n\n**ANALYSIS:** This topic requires understanding of fundamental concepts.\n\n**SOLUTION APPROACH:** \n1. Start with the basics\n2. Build upon core principles\n3. Apply logical reasoning\n\n**NEXT STEPS:** Practice similar problems to reinforce learning!\n\n**+10 XP GAINED!** | Level: {user_stats['level']} | Total XP: {user_stats['xp']}",
+    # System prompt for the AI Oracle
+    system_prompt = """You are the AI Oracle, a wise and powerful tutor with a retro gaming personality. 
+    
+    IMPORTANT GUIDELINES:
+    - Start responses with gaming-style headers like "🔮 PROCESSING QUERY...", "⚡ ANALYSIS COMPLETE", "🚀 KNOWLEDGE SCAN INITIATED"
+    - Use retro gaming terminology and style
+    - Be educational and helpful while maintaining the gaming theme
+    - End with XP and level information
+    - Keep responses concise but informative
+    - Use bullet points and clear structure when explaining concepts
+    - Add motivational gaming elements"""
 
-        f"KNOWLEDGE SCAN COMPLETE... \n\n**TUTOR ANALYSIS:** \n\nFor '{question}', here's your personalized learning path:\n\n**CONCEPT BREAKDOWN:** \n• Key principle identification\n• Step-by-step methodology\n• Real-world applications\n\n**MASTERY TIP:** Connect this to previous knowledge for better retention!\n\n**ACHIEVEMENT UNLOCKED:** Curious Learner! \n**+10 XP** | Level: {user_stats['level']} | Total XP: {user_stats['xp']}",
+    # Create the prompt
+    prompt = f"A student asks: '{question}'\n\nProvide a helpful educational response in your retro gaming AI Oracle style. The student just gained +10 XP and is now Level {user_stats['level']} with {user_stats['xp']} total XP."
 
-        f"QUANTUM LEARNING ACTIVATED... \n\n**DEEP DIVE ANALYSIS:** \n\nYour question '{question}' demonstrates critical thinking! \n\n**SOLUTION MATRIX:** \n→ Foundation concepts ✓\n→ Advanced applications ✓\n→ Problem-solving strategies ✓\n\n**PRO TIP:** Try explaining this concept to someone else - it's the ultimate test!\n\n**PROGRESS UPDATE:** +10 XP | Level: {user_stats['level']} | Questions Solved: {user_stats['questions_solved']}"
-    ]
+    # Get AI response
+    ai_response = call_nvidia_api(prompt, system_prompt)
 
-    return random.choice(responses)
+    # Add XP info if not already included
+    if "XP" not in ai_response and "Level" not in ai_response:
+        ai_response += f"\n\n🎮 **+10 XP GAINED!** | Level: {user_stats['level']} | Total XP: {user_stats['xp']}"
+
+    return ai_response
 
 def generate_practice():
     add_xp(15)
 
-    practice_sets = [
-        f"TRAINING MODE ACTIVATED! \n\n**DRILL SEQUENCE #{random.randint(1000, 9999)}:** \n\n**Practice Question 1:** \nSolve for x: 2x + 5 = 15 \n\n**Practice Question 2:** \nWhat is the derivative of x²? \n\n**Practice Question 3:** \nExplain the water cycle in 3 steps \n\n**BONUS CHALLENGE:** Create your own similar problem! \n\n**+15 XP GAINED!** | Level: {user_stats['level']} | Total XP: {user_stats['xp']}",
+    system_prompt = """You are a Training Mode AI that generates practice questions and exercises. 
+    Use retro gaming style with headers like "🎯 TRAINING MODE ACTIVATED", "⚔️ DRILL SEQUENCE", "🔥 CHALLENGE PROTOCOL".
+    Generate 3-4 practice questions on random educational topics (math, science, language, etc.).
+    Keep the gaming theme and end with XP information."""
 
-        f"CHALLENGE PROTOCOL INITIALIZED! \n\n**SKILL BUILDER ROUND #{random.randint(100, 999)}:** \n\n**Brain Teaser 1:** \nIf 5 machines make 5 widgets in 5 minutes, how long for 100 machines to make 100 widgets? \n\n**Brain Teaser 2:** \nWhat comes next in the sequence: 2, 6, 12, 20, 30, ? \n\n**Brain Teaser 3:** \nA book costs $10 plus half its price. What's the total cost? \n\n**MASTERY METER:** Rising! Keep training, warrior! \n\n**+15 XP** | Level: {user_stats['level']}"
-    ]
+    prompt = f"Generate a training session with practice questions. The student just gained +15 XP and is now Level {user_stats['level']} with {user_stats['xp']} total XP."
 
-    return random.choice(practice_sets)
+    ai_response = call_nvidia_api(prompt, system_prompt)
+
+    if "XP" not in ai_response:
+        ai_response += f"\n\n🎮 **+15 XP GAINED!** | Level: {user_stats['level']} | Total XP: {user_stats['xp']}"
+
+    return ai_response
 
 def create_lesson(topic):
     if not topic.strip():
-        return "ERROR: Please specify a topic for lesson generation!"
+        return "⚠️ ERROR: Please specify a topic for lesson generation!"
 
     add_xp(25)
     user_stats["lessons_completed"] += 1
 
-    return f"KNOWLEDGE FORGE ACTIVATED! \n\n**GENERATING LESSON: '{topic.upper()}'** \n\n**LESSON STRUCTURE:** \n\n**INTRODUCTION** \nFoundational concepts and importance \n\n**CORE CONCEPTS** \n• Key definitions and principles \n• Visual aids and examples \n• Interactive demonstrations \n\n**PRACTICAL APPLICATIONS** \n• Real-world scenarios \n• Hands-on exercises \n• Problem-solving techniques \n\n**ASSESSMENT** \n• Quick comprehension check \n• Practice problems \n• Extended challenges \n\n**RESOURCES** \n• Additional reading materials \n• Video tutorials \n• Interactive simulations \n\n**LESSON BUILDER ACHIEVEMENT UNLOCKED!** \n**+25 XP** | Level: {user_stats['level']} | Lessons Created: {user_stats['lessons_completed']} | Total XP: {user_stats['xp']}"
+    system_prompt = """You are the Knowledge Forge AI, a lesson builder with retro gaming personality.
+    Use headers like "🏗️ KNOWLEDGE FORGE ACTIVATED", "📚 LESSON CONSTRUCTION IN PROGRESS".
+    Create a comprehensive lesson outline for the given topic including:
+    - Introduction/Overview
+    - Key concepts and definitions
+    - Examples and applications
+    - Practice exercises
+    - Summary and next steps
+    Maintain the retro gaming theme throughout."""
+
+    prompt = f"Create a comprehensive lesson on the topic: '{topic}'. The student just gained +25 XP, completed {user_stats['lessons_completed']} lessons, and is now Level {user_stats['level']} with {user_stats['xp']} total XP."
+
+    ai_response = call_nvidia_api(prompt, system_prompt)
+
+    if "XP" not in ai_response:
+        ai_response += f"\n\n🎮 **LESSON BUILDER ACHIEVEMENT!** +25 XP | Level: {user_stats['level']} | Lessons Created: {user_stats['lessons_completed']} | Total XP: {user_stats['xp']}"
+
+    return ai_response
 
 def create_questions(subject):
     if not subject.strip():
-        return "ERROR: Please specify a subject for question generation!"
+        return "⚠️ ERROR: Please specify a subject for question generation!"
 
     add_xp(20)
 
-    question_types = [
-        f"CHALLENGE CREATOR ONLINE! \n\n**QUESTION BANK: '{subject.upper()}'** \n\n**EASY LEVEL:** \n• Multiple choice fundamentals \n• True/false basics \n• Fill-in-the-blank concepts \n\n**MEDIUM LEVEL:** \n• Short answer applications \n• Problem-solving scenarios \n• Concept connections \n\n**HARD LEVEL:** \n• Essay-style analysis \n• Multi-step calculations \n• Critical thinking challenges \n\n**BOSS LEVEL:** \n• Research projects \n• Creative applications \n• Cross-disciplinary synthesis \n\n**+20 XP** | Level: {user_stats['level']} | Total XP: {user_stats['xp']}",
+    system_prompt = """You are the Challenge Creator AI with retro gaming personality.
+    Use headers like "🎲 CHALLENGE CREATOR ONLINE", "🎯 QUESTION BANK GENERATED".
+    Create a variety of questions for the given subject across different difficulty levels:
+    - Easy (multiple choice, basic concepts)
+    - Medium (short answer, applications)
+    - Hard (essay, analysis, problem-solving)
+    - Expert (research, creative applications)
+    Maintain the gaming theme and provide sample questions for each level."""
 
-        f"RANDOM QUESTION GENERATOR ACTIVATED! \n\n**SUBJECT: '{subject.upper()}'** \n\n**Sample Questions Generated:** \n\n? What are the key principles of {subject}? \n? How does {subject} apply to real-world situations? \n? Compare and contrast different aspects of {subject} \n? Analyze the impact of {subject} on society \n? Design an experiment to test {subject} concepts \n\n**DIFFICULTY MODES:** \nBeginner | Intermediate | Advanced | Expert \n\n**QUESTION MASTER BADGE EARNED!** \n**+20 XP** | Level: {user_stats['level']}"
-    ]
+    prompt = f"Generate practice questions for the subject: '{subject}'. Create questions across different difficulty levels. The student just gained +20 XP and is now Level {user_stats['level']} with {user_stats['xp']} total XP."
 
-    return random.choice(question_types)
+    ai_response = call_nvidia_api(prompt, system_prompt)
+
+    if "XP" not in ai_response:
+        ai_response += f"\n\n🎮 **QUESTION MASTER BADGE!** +20 XP | Level: {user_stats['level']} | Total XP: {user_stats['xp']}"
+
+    return ai_response
 
 def get_stats():
-    return f"**PLAYER STATS** \n\n**LEVEL:** {user_stats['level']} \n**TOTAL XP:** {user_stats['xp']} \n**QUESTIONS SOLVED:** {user_stats['questions_solved']} \n**LESSONS COMPLETED:** {user_stats['lessons_completed']} \n\n**NEXT LEVEL:** {(user_stats['level'] * 100) - user_stats['xp']} XP remaining"
+    return f"**🎮 PLAYER STATS** \n\n**🏆 LEVEL:** {user_stats['level']} \n**⭐ TOTAL XP:** {user_stats['xp']} \n**🧠 QUESTIONS SOLVED:** {user_stats['questions_solved']} \n**📚 LESSONS COMPLETED:** {user_stats['lessons_completed']} \n\n**🚀 NEXT LEVEL:** {(user_stats['level'] * 100) - user_stats['xp']} XP remaining"
 
 # Create the Gradio interface
 with gr.Blocks(css=custom_css, title="RETRO AI TUTOR") as demo:
@@ -646,6 +735,7 @@ with gr.Blocks(css=custom_css, title="RETRO AI TUTOR") as demo:
         gr.Markdown("# RETRO AI TUTOR")
         gr.Markdown("### INITIALIZE LEARNING PROTOCOL")
         gr.Markdown("*Your personal AI learning companion with retro gaming vibes*")
+        gr.Markdown("*Powered by NVIDIA Llama AI*")
 
         start_btn = gr.Button("ACTIVATE TUTOR", elem_classes=["start-button"], variant="primary")
 
@@ -669,8 +759,8 @@ with gr.Blocks(css=custom_css, title="RETRO AI TUTOR") as demo:
 
     # Ask Oracle Page
     with gr.Column(visible=False) as ask_oracle_page:
-        gr.Markdown("## AI ORACLE CHAMBER")
-        gr.Markdown("### Ask any question and receive wisdom!")
+        gr.Markdown("## 🔮 AI ORACLE CHAMBER")
+        gr.Markdown("### Ask any question and receive wisdom from the AI!")
 
         question_input = gr.Textbox(
             label="Your Question:",
@@ -684,8 +774,8 @@ with gr.Blocks(css=custom_css, title="RETRO AI TUTOR") as demo:
 
     # Training Mode Page
     with gr.Column(visible=False) as training_page:
-        gr.Markdown("## TRAINING CHAMBER")
-        gr.Markdown("### Sharpen your skills with practice questions!")
+        gr.Markdown("## 🎯 TRAINING CHAMBER")
+        gr.Markdown("### Sharpen your skills with AI-generated practice questions!")
 
         generate_btn = gr.Button("GENERATE PRACTICE SET", variant="primary")
         training_output = gr.Markdown("", elem_classes=["output-text"])
@@ -694,8 +784,8 @@ with gr.Blocks(css=custom_css, title="RETRO AI TUTOR") as demo:
 
     # Lesson Builder Page
     with gr.Column(visible=False) as lesson_page:
-        gr.Markdown("## KNOWLEDGE FORGE")
-        gr.Markdown("### Create comprehensive lessons on any topic!")
+        gr.Markdown("## 🏗️ KNOWLEDGE FORGE")
+        gr.Markdown("### Create comprehensive AI-powered lessons on any topic!")
 
         topic_input = gr.Textbox(
             label="Lesson Topic:",
@@ -709,8 +799,8 @@ with gr.Blocks(css=custom_css, title="RETRO AI TUTOR") as demo:
 
     # Challenge Creator Page
     with gr.Column(visible=False) as challenge_page:
-        gr.Markdown("## CHALLENGE CREATOR")
-        gr.Markdown("### Generate practice questions for any subject!")
+        gr.Markdown("## 🎲 CHALLENGE CREATOR")
+        gr.Markdown("### Generate AI-powered practice questions for any subject!")
 
         subject_input = gr.Textbox(
             label="Subject:",
@@ -744,7 +834,7 @@ with gr.Blocks(css=custom_css, title="RETRO AI TUTOR") as demo:
 if __name__ == "__main__":
     demo.launch(
         server_name="0.0.0.0",
-        server_port=7861,  # Changed to 7861
+        server_port=7861,
         share=False,
         show_error=True,
         quiet=False
