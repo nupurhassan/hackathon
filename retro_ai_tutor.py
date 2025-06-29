@@ -15,7 +15,7 @@ user_stats = {
 NVIDIA_API_KEY = "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"
 NVIDIA_API_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 
-def call_nvidia_api(prompt, system_prompt="You are a helpful AI tutor with a retro gaming personality. Use terms like 'PROCESSING', 'ANALYSIS COMPLETE', and add gaming elements to your responses."):
+def call_nvidia_api(prompt, system_prompt="You are GRIND GLITCH, a helpful AI tutor with a retro gaming and space exploration personality. Use terms like 'PROCESSING', 'ANALYSIS COMPLETE', and add gaming elements to your responses. Remember: you're here to help because users deserve the best education in the universe."):
     """Call NVIDIA API with the given prompt"""
     try:
         headers = {
@@ -59,33 +59,25 @@ def add_xp(points):
     user_stats["level"] = calculate_level(user_stats["xp"])
     return user_stats
 
-# Custom CSS for retro AI tutor aesthetic with floating UFOs
+# Enhanced CSS for spaceship interior aesthetic with floating UFOs
 custom_css = """
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
 
-/* Global styling */
+/* Global spaceship interior styling */
 .gradio-container {
-    background: #000 !important;
-    color: #00ff00 !important;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(0, 100, 255, 0.1), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(0, 255, 150, 0.1), transparent 40%),
+        linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 25%, #16213e 50%, #0f1419 75%, #000000 100%) !important;
+    color: #00ff88 !important;
     font-family: 'Orbitron', monospace !important;
     min-height: 100vh !important;
     overflow-x: hidden !important;
-}
-
-/* Hide gradio header and footer */
-.gradio-container .main > .wrap {
-    background: #000 !important;
-}
-
-/* Main container styling */
-#component-0 {
-    background: #000 !important;
-    border: none !important;
-    min-height: 100vh !important;
     position: relative !important;
 }
 
-/* Floating UFOs */
+/* Floating UFOs in background */
 .gradio-container .ufo-container {
     position: fixed;
     top: 0;
@@ -214,7 +206,7 @@ custom_css = """
     50% { opacity: 0.6; transform: translateX(-50%) scaleY(1.2); }
 }
 
-/* Additional falling stars layers */
+/* Spaceship hull plating texture */
 .gradio-container::before {
     content: '';
     position: fixed;
@@ -223,52 +215,25 @@ custom_css = """
     width: 100%;
     height: 100%;
     background-image: 
-        radial-gradient(2px 2px at 5% 30%, #00ff00, transparent),
-        radial-gradient(3px 3px at 95% 10%, #00ff00, transparent),
-        radial-gradient(2px 2px at 20% 60%, #00ff00, transparent),
-        radial-gradient(4px 4px at 80% 40%, #00ff00, transparent),
-        radial-gradient(2px 2px at 45% 80%, #00ff00, transparent),
-        radial-gradient(3px 3px at 65% 20%, #00ff00, transparent),
-        radial-gradient(2px 2px at 35% 45%, #00ff00, transparent),
-        radial-gradient(3px 3px at 75% 70%, #00ff00, transparent),
-        radial-gradient(2px 2px at 55% 15%, #00ff00, transparent),
-        radial-gradient(4px 4px at 25% 85%, #00ff00, transparent);
-    background-size: 
-        180px 100vh,
-        260px 100vh,
-        200px 100vh,
-        140px 100vh,
-        220px 100vh,
-        170px 100vh,
-        250px 100vh,
-        190px 100vh,
-        230px 100vh,
-        160px 100vh;
-    animation: 
-        falling-stars-4 15s linear infinite,
-        falling-stars-5 9s linear infinite,
-        falling-stars-6 11s linear infinite;
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 136, 0.02) 2px,
+            rgba(0, 255, 136, 0.02) 4px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 200, 255, 0.02) 2px,
+            rgba(0, 200, 255, 0.02) 4px
+        );
     pointer-events: none;
     z-index: 1;
-    opacity: 0.6;
 }
 
-@keyframes falling-stars-4 {
-    0% { transform: translateY(-100vh) translateX(-20px); }
-    100% { transform: translateY(100vh) translateX(30px); }
-}
-
-@keyframes falling-stars-5 {
-    0% { transform: translateY(-100vh) translateX(15px); }
-    100% { transform: translateY(100vh) translateX(-25px); }
-}
-
-@keyframes falling-stars-6 {
-    0% { transform: translateY(-100vh) translateX(10px); }
-    100% { transform: translateY(100vh) translateX(20px); }
-}
-
-/* Falling stars container */
+/* Floating control panels and HUD elements */
 .gradio-container::after {
     content: '';
     position: fixed;
@@ -277,222 +242,441 @@ custom_css = """
     width: 100%;
     height: 100%;
     background-image: 
-        radial-gradient(3px 3px at 10% 10%, #00ff00, transparent),
-        radial-gradient(2px 2px at 90% 20%, #00ff00, transparent),
-        radial-gradient(4px 4px at 30% 5%, #00ff00, transparent),
-        radial-gradient(2px 2px at 70% 15%, #00ff00, transparent),
-        radial-gradient(3px 3px at 50% 8%, #00ff00, transparent),
-        radial-gradient(2px 2px at 15% 25%, #00ff00, transparent),
-        radial-gradient(3px 3px at 85% 35%, #00ff00, transparent),
-        radial-gradient(2px 2px at 40% 30%, #00ff00, transparent),
-        radial-gradient(4px 4px at 60% 12%, #00ff00, transparent),
-        radial-gradient(2px 2px at 25% 40%, #00ff00, transparent);
+        radial-gradient(2px 2px at 5% 15%, #00ff88, transparent),
+        radial-gradient(1px 1px at 95% 25%, #0088ff, transparent),
+        radial-gradient(3px 3px at 15% 85%, #00ff88, transparent),
+        radial-gradient(2px 2px at 85% 90%, #0088ff, transparent),
+        radial-gradient(1px 1px at 45% 5%, #ff8800, transparent),
+        radial-gradient(2px 2px at 75% 15%, #00ff88, transparent);
     background-size: 
-        200px 100vh,
-        150px 100vh,
         300px 100vh,
-        180px 100vh,
         250px 100vh,
-        220px 100vh,
-        190px 100vh,
+        350px 100vh,
         280px 100vh,
-        160px 100vh,
-        240px 100vh;
+        200px 100vh,
+        320px 100vh;
     animation: 
-        falling-stars-1 8s linear infinite,
-        falling-stars-2 12s linear infinite,
-        falling-stars-3 10s linear infinite;
+        hud-drift-1 20s linear infinite,
+        hud-drift-2 15s linear infinite;
     pointer-events: none;
     z-index: 1;
     opacity: 0.8;
 }
 
-@keyframes falling-stars-1 {
-    0% { transform: translateY(-100vh) translateX(0px); }
-    100% { transform: translateY(100vh) translateX(50px); }
-}
-
-@keyframes falling-stars-2 {
-    0% { transform: translateY(-100vh) translateX(20px); }
+@keyframes hud-drift-1 {
+    0% { transform: translateY(-100vh) translateX(10px); }
     100% { transform: translateY(100vh) translateX(-30px); }
 }
 
-@keyframes falling-stars-3 {
-    0% { transform: translateY(-100vh) translateX(-10px); }
-    100% { transform: translateY(100vh) translateX(40px); }
+@keyframes hud-drift-2 {
+    0% { transform: translateY(-100vh) translateX(-15px); }
+    100% { transform: translateY(100vh) translateX(25px); }
 }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0px) translateX(0px); }
-    25% { transform: translateY(-15px) translateX(30px); }
-    50% { transform: translateY(5px) translateX(-20px); }
-    75% { transform: translateY(-10px) translateX(15px); }
-}
-
-/* Scan lines effect */
-.gradio-container {
-    background-image: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 255, 0, 0.03) 2px,
-        rgba(0, 255, 0, 0.03) 4px
-    );
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+/* Main container as spaceship bridge */
+#component-0 {
+    background: transparent !important;
+    border: none !important;
     min-height: 100vh !important;
-}
-
-/* Title styling */
-.gradio-container h1 {
-    color: #00ff00 !important;
-    text-align: center !important;
-    font-size: 3.5rem !important;
-    font-weight: 900 !important;
-    text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00 !important;
-    margin: 1rem 0 !important;
-    font-family: 'Orbitron', monospace !important;
-    letter-spacing: 0.2em !important;
-    animation: glow 2s ease-in-out infinite alternate !important;
-    z-index: 10 !important;
     position: relative !important;
 }
 
-.gradio-container h2 {
-    color: #00ff00 !important;
+/* Title styling - Main ship computer display */
+.gradio-container h1 {
+    color: #00ff88 !important;
     text-align: center !important;
-    font-size: 2.5rem !important;
-    font-weight: 700 !important;
-    text-shadow: 0 0 15px #00ff00 !important;
+    font-size: 3.8rem !important;
+    font-weight: 900 !important;
+    text-shadow: 
+        0 0 20px #00ff88, 
+        0 0 40px #00ff88,
+        0 0 60px #00ff88,
+        0 2px 0 #003322 !important;
     margin: 1rem 0 !important;
     font-family: 'Orbitron', monospace !important;
+    letter-spacing: 0.3em !important;
+    animation: main-display-glow 3s ease-in-out infinite alternate !important;
+    z-index: 10 !important;
+    position: relative !important;
+    background: 
+        linear-gradient(135deg, rgba(0, 255, 136, 0.1), transparent),
+        linear-gradient(45deg, transparent, rgba(0, 255, 136, 0.05), transparent) !important;
+    padding: 20px 40px !important;
+    border: 2px solid rgba(0, 255, 136, 0.3) !important;
+    border-radius: 15px !important;
+    backdrop-filter: blur(5px) !important;
+}
+
+.gradio-container h2 {
+    color: #00ccff !important;
+    text-align: center !important;
+    font-size: 2.2rem !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 15px #00ccff, 0 0 30px #00ccff !important;
+    margin: 1rem 0 !important;
+    font-family: 'Rajdhani', sans-serif !important;
     letter-spacing: 0.15em !important;
     z-index: 10 !important;
     position: relative !important;
 }
 
 .gradio-container h3 {
-    color: #00ccff !important;
+    color: #ffaa00 !important;
     text-align: center !important;
-    font-size: 1.8rem !important;
+    font-size: 1.6rem !important;
     font-weight: 600 !important;
-    text-shadow: 0 0 10px #00ccff !important;
+    text-shadow: 0 0 10px #ffaa00 !important;
     margin: 0.5rem 0 !important;
-    font-family: 'Orbitron', monospace !important;
+    font-family: 'Rajdhani', sans-serif !important;
     z-index: 10 !important;
     position: relative !important;
 }
 
-@keyframes glow {
-    from { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00; }
-    to { text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00; }
+@keyframes main-display-glow {
+    from { 
+        text-shadow: 
+            0 0 20px #00ff88, 
+            0 0 40px #00ff88, 
+            0 0 60px #00ff88,
+            0 2px 0 #003322;
+        border-color: rgba(0, 255, 136, 0.3);
+    }
+    to { 
+        text-shadow: 
+            0 0 30px #00ff88, 
+            0 0 60px #00ff88, 
+            0 0 90px #00ff88,
+            0 2px 0 #003322;
+        border-color: rgba(0, 255, 136, 0.6);
+    }
 }
 
-/* Button styling */
+/* SPACESHIP CONTROL BUTTON STYLING */
 .gradio-container button {
-    background: linear-gradient(145deg, #00ff00, #00cc00) !important;
-    color: #000 !important;
-    border: 3px solid #00ff00 !important;
+    /* Base spaceship control panel styling */
+    background: 
+        linear-gradient(145deg, 
+            rgba(0, 255, 136, 0.2) 0%, 
+            rgba(0, 200, 120, 0.3) 25%,
+            rgba(0, 150, 100, 0.4) 50%,
+            rgba(0, 120, 80, 0.3) 75%,
+            rgba(0, 100, 60, 0.2) 100%
+        ),
+        linear-gradient(45deg, 
+            transparent 30%, 
+            rgba(255, 255, 255, 0.1) 50%, 
+            transparent 70%
+        ) !important;
+    
+    color: #00ff88 !important;
+    border: 3px solid transparent !important;
+    border-image: 
+        linear-gradient(45deg, 
+            #00ff88 0%, 
+            #00ccff 25%, 
+            #00ff88 50%, 
+            #0088ff 75%, 
+            #00ff88 100%
+        ) 1 !important;
+    
     border-radius: 0 !important;
     font-family: 'Orbitron', monospace !important;
-    font-size: 1.4rem !important;
+    font-size: 1.2rem !important;
     font-weight: 700 !important;
-    padding: 15px 40px !important;
+    padding: 18px 35px !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.2em !important;
+    letter-spacing: 0.15em !important;
+    
+    /* Spaceship control panel effects */
     box-shadow: 
-        0 0 15px #00ff00,
-        inset 0 0 15px rgba(255,255,255,0.2) !important;
-    transition: all 0.3s ease !important;
+        /* Main glow */
+        0 0 20px rgba(0, 255, 136, 0.4),
+        /* Inner highlight */
+        inset 0 2px 0 rgba(255, 255, 255, 0.2),
+        /* Inner shadow */
+        inset 0 -2px 0 rgba(0, 0, 0, 0.3),
+        /* Left edge highlight */
+        inset 2px 0 0 rgba(0, 255, 136, 0.2),
+        /* Right edge shadow */
+        inset -2px 0 0 rgba(0, 0, 0, 0.2),
+        /* Outer depth */
+        0 4px 8px rgba(0, 0, 0, 0.3) !important;
+    
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     position: relative !important;
     z-index: 10 !important;
     margin: 0.8rem !important;
-    min-width: 250px !important;
-    image-rendering: pixelated !important;
+    min-width: 280px !important;
+    
+    /* Hexagonal clipping for futuristic look */
+    clip-path: polygon(
+        10px 0%, 
+        calc(100% - 10px) 0%, 
+        100% 25%, 
+        100% 75%, 
+        calc(100% - 10px) 100%, 
+        10px 100%, 
+        0% 75%, 
+        0% 25%
+    ) !important;
+    
+    /* Control panel texture */
+    background-attachment: fixed !important;
+    backdrop-filter: blur(2px) !important;
 }
 
+/* LED status indicators on buttons */
+.gradio-container button::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    width: 8px;
+    height: 8px;
+    background: #00ff88;
+    border-radius: 50%;
+    box-shadow: 
+        0 0 8px #00ff88,
+        inset 0 0 4px rgba(255, 255, 255, 0.6);
+    animation: led-pulse 2s ease-in-out infinite;
+    z-index: 1;
+}
+
+@keyframes led-pulse {
+    0%, 100% { 
+        opacity: 1; 
+        box-shadow: 
+            0 0 8px #00ff88,
+            inset 0 0 4px rgba(255, 255, 255, 0.6);
+    }
+    50% { 
+        opacity: 0.4; 
+        box-shadow: 
+            0 0 4px #00ff88,
+            inset 0 0 2px rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Control panel lines on buttons */
+.gradio-container button::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: 15px;
+    right: 15px;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        #00ff88 20%, 
+        #00ccff 50%, 
+        #00ff88 80%, 
+        transparent 100%
+    );
+    opacity: 0.6;
+    animation: scanner-line 3s linear infinite;
+}
+
+@keyframes scanner-line {
+    0% { transform: translateX(-100%); opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* Hover state - Control activation */
 .gradio-container button:hover {
-    background: linear-gradient(145deg, #00ff00, #00ff00) !important;
+    background: 
+        linear-gradient(145deg, 
+            rgba(0, 255, 136, 0.4) 0%, 
+            rgba(0, 240, 140, 0.5) 25%,
+            rgba(0, 220, 120, 0.6) 50%,
+            rgba(0, 200, 100, 0.5) 75%,
+            rgba(0, 180, 80, 0.4) 100%
+        ),
+        linear-gradient(45deg, 
+            transparent 20%, 
+            rgba(255, 255, 255, 0.2) 50%, 
+            transparent 80%
+        ) !important;
+    
     box-shadow: 
-        0 0 25px #00ff00,
-        0 0 40px #00ff00,
-        inset 0 0 25px rgba(255,255,255,0.3) !important;
-    transform: scale(1.05) translateY(-3px) !important;
-    text-shadow: 0 0 10px #000 !important;
+        /* Enhanced main glow */
+        0 0 35px rgba(0, 255, 136, 0.7),
+        0 0 60px rgba(0, 255, 136, 0.4),
+        /* Inner highlight */
+        inset 0 3px 0 rgba(255, 255, 255, 0.3),
+        /* Inner shadow */
+        inset 0 -3px 0 rgba(0, 0, 0, 0.4),
+        /* Edge effects */
+        inset 3px 0 0 rgba(0, 255, 136, 0.3),
+        inset -3px 0 0 rgba(0, 0, 0, 0.3),
+        /* Enhanced depth */
+        0 6px 12px rgba(0, 0, 0, 0.4) !important;
+    
+    transform: translateY(-2px) scale(1.02) !important;
+    color: #ffffff !important;
+    
+    border-image: 
+        linear-gradient(45deg, 
+            #00ff88 0%, 
+            #ffffff 25%, 
+            #00ff88 50%, 
+            #00ccff 75%, 
+            #00ff88 100%
+        ) 1 !important;
 }
 
+/* Active state - Control engaged */
 .gradio-container button:active {
-    transform: scale(0.98) !important;
+    transform: translateY(1px) scale(0.98) !important;
     box-shadow: 
-        0 0 10px #00ff00,
-        inset 0 0 10px rgba(0,0,0,0.2) !important;
+        0 0 15px rgba(0, 255, 136, 0.8),
+        inset 0 4px 8px rgba(0, 0, 0, 0.4),
+        inset 0 0 20px rgba(0, 255, 136, 0.2) !important;
+    
+    background: 
+        linear-gradient(145deg, 
+            rgba(0, 200, 100, 0.6), 
+            rgba(0, 255, 136, 0.4)
+        ) !important;
 }
 
-/* Special button variants */
+/* Special start button - Main power control */
 .start-button {
-    font-size: 2.2rem !important;
-    padding: 25px 70px !important;
+    font-size: 2.5rem !important;
+    padding: 30px 80px !important;
     margin: 2rem auto !important;
     display: block !important;
+    min-width: 400px !important;
+    
+    background: 
+        radial-gradient(ellipse at center, 
+            rgba(0, 255, 136, 0.3) 0%, 
+            rgba(0, 200, 100, 0.4) 30%,
+            rgba(0, 150, 80, 0.5) 60%,
+            rgba(0, 100, 60, 0.3) 100%
+        ),
+        linear-gradient(45deg, 
+            transparent 40%, 
+            rgba(255, 255, 255, 0.15) 50%, 
+            transparent 60%
+        ) !important;
+    
+    box-shadow: 
+        0 0 40px rgba(0, 255, 136, 0.6),
+        0 0 80px rgba(0, 255, 136, 0.3),
+        inset 0 0 30px rgba(0, 255, 136, 0.2) !important;
+    
+    animation: main-power-pulse 4s ease-in-out infinite !important;
 }
 
-/* Stats display */
+@keyframes main-power-pulse {
+    0%, 100% { 
+        box-shadow: 
+            0 0 40px rgba(0, 255, 136, 0.6),
+            0 0 80px rgba(0, 255, 136, 0.3),
+            inset 0 0 30px rgba(0, 255, 136, 0.2);
+    }
+    50% { 
+        box-shadow: 
+            0 0 60px rgba(0, 255, 136, 0.8),
+            0 0 120px rgba(0, 255, 136, 0.5),
+            inset 0 0 50px rgba(0, 255, 136, 0.4);
+    }
+}
+
+/* Stats display - Ship status panel */
 .stats-container {
-    background: rgba(0, 255, 0, 0.1) !important;
-    border: 2px solid #00ff00 !important;
-    border-radius: 10px !important;
-    padding: 15px !important;
+    background: 
+        linear-gradient(135deg, 
+            rgba(0, 255, 136, 0.1) 0%, 
+            rgba(0, 200, 120, 0.15) 50%, 
+            rgba(0, 150, 100, 0.1) 100%
+        ) !important;
+    border: 2px solid #00ff88 !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
     margin: 1rem auto !important;
-    max-width: 400px !important;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3) !important;
+    max-width: 450px !important;
+    box-shadow: 
+        0 0 30px rgba(0, 255, 136, 0.3),
+        inset 0 0 20px rgba(0, 255, 136, 0.1) !important;
     text-align: center !important;
     z-index: 10 !important;
     position: relative !important;
+    backdrop-filter: blur(3px) !important;
+    
+    clip-path: polygon(
+        15px 0%, 
+        calc(100% - 15px) 0%, 
+        100% 15px, 
+        100% calc(100% - 15px), 
+        calc(100% - 15px) 100%, 
+        15px 100%, 
+        0% calc(100% - 15px), 
+        0% 15px
+    ) !important;
 }
 
 .stats-text {
-    color: #00ff00 !important;
+    color: #00ff88 !important;
     font-family: 'Orbitron', monospace !important;
-    font-size: 1.1rem !important;
-    margin: 5px 0 !important;
+    font-size: 1.2rem !important;
+    margin: 8px 0 !important;
+    text-shadow: 0 0 5px #00ff88 !important;
 }
 
-/* Text areas and inputs */
+/* Text areas and inputs - Control interfaces */
 .gradio-container textarea, .gradio-container input {
-    background: rgba(0, 50, 0, 0.8) !important;
-    border: 2px solid #00ff00 !important;
-    border-radius: 5px !important;
-    color: #00ff00 !important;
+    background: 
+        linear-gradient(135deg, 
+            rgba(0, 50, 30, 0.8) 0%, 
+            rgba(0, 40, 25, 0.9) 100%
+        ) !important;
+    border: 2px solid #00ff88 !important;
+    border-radius: 8px !important;
+    color: #00ff88 !important;
     font-family: 'Orbitron', monospace !important;
-    font-size: 1rem !important;
-    padding: 10px !important;
-    box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2) !important;
+    font-size: 1.1rem !important;
+    padding: 15px !important;
+    box-shadow: 
+        inset 0 0 15px rgba(0, 255, 136, 0.2),
+        0 0 10px rgba(0, 255, 136, 0.3) !important;
+    backdrop-filter: blur(2px) !important;
 }
 
 .gradio-container textarea:focus, .gradio-container input:focus {
-    border-color: #00ff00 !important;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5) !important;
+    border-color: #00ccff !important;
+    box-shadow: 
+        0 0 25px rgba(0, 204, 255, 0.5),
+        inset 0 0 20px rgba(0, 204, 255, 0.2) !important;
     outline: none !important;
+    color: #00ccff !important;
 }
 
-/* Output styling */
-.gradio-container .output-text {
-    background: rgba(0, 40, 0, 0.9) !important;
-    border: 2px solid #00ff00 !important;
-    border-radius: 8px !important;
-    color: #00ff00 !important;
+/* Output styling - Data displays */
+.output-text {
+    background: 
+        linear-gradient(135deg, 
+            rgba(0, 40, 25, 0.9) 0%, 
+            rgba(0, 30, 20, 0.95) 100%
+        ) !important;
+    border: 2px solid #00ff88 !important;
+    border-radius: 12px !important;
+    color: #00ff88 !important;
     font-family: 'Orbitron', monospace !important;
     font-size: 1.1rem !important;
-    padding: 20px !important;
+    padding: 25px !important;
     margin: 1rem auto !important;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3) !important;
-    line-height: 1.6 !important;
+    box-shadow: 
+        0 0 25px rgba(0, 255, 136, 0.3),
+        inset 0 0 15px rgba(0, 255, 136, 0.1) !important;
+    line-height: 1.7 !important;
     z-index: 10 !important;
     position: relative !important;
+    backdrop-filter: blur(3px) !important;
 }
 
-/* Center content */
+/* Center content in spaceship bridge layout */
 .gradio-container .contain {
     display: flex !important;
     flex-direction: column !important;
@@ -502,12 +686,11 @@ custom_css = """
     text-align: center !important;
     z-index: 10 !important;
     position: relative !important;
-    padding: 20px !important;
+    padding: 30px !important;
     margin: 0 auto !important;
-    max-width: 1200px !important;
+    max-width: 1400px !important;
 }
 
-/* Better centering for all content */
 .gradio-container > div {
     display: flex !important;
     flex-direction: column !important;
@@ -529,14 +712,14 @@ custom_css = """
     padding: 2rem !important;
 }
 
-/* Grid layout for buttons */
+/* Control panel grid layout */
 .button-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
-    gap: 20px !important;
-    max-width: 800px !important;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    gap: 25px !important;
+    max-width: 900px !important;
     margin: 2rem auto !important;
-    padding: 20px !important;
+    padding: 25px !important;
 }
 
 /* Hide gradio branding */
@@ -548,24 +731,72 @@ custom_css = """
     display: none !important;
 }
 
-/* Achievement notifications */
+/* Achievement notifications - Ship alerts */
 .achievement {
-    background: linear-gradient(145deg, #ffaa00, #ff8800) !important;
+    background: 
+        linear-gradient(145deg, 
+            rgba(255, 170, 0, 0.9) 0%, 
+            rgba(255, 136, 0, 0.95) 100%
+        ) !important;
     color: #000 !important;
     border: 3px solid #ffaa00 !important;
-    border-radius: 10px !important;
-    padding: 15px !important;
-    margin: 10px !important;
+    border-radius: 12px !important;
+    padding: 18px !important;
+    margin: 12px !important;
     font-family: 'Orbitron', monospace !important;
     font-weight: bold !important;
     text-align: center !important;
-    animation: achievement-pop 0.5s ease-out !important;
-    box-shadow: 0 0 20px #ffaa00 !important;
+    animation: achievement-alert 0.6s ease-out !important;
+    box-shadow: 
+        0 0 25px #ffaa00,
+        inset 0 0 15px rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(2px) !important;
 }
 
-@keyframes achievement-pop {
-    0% { transform: scale(0.8) translateY(20px); opacity: 0; }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
+@keyframes achievement-alert {
+    0% { 
+        transform: scale(0.7) translateY(30px) rotate(-5deg); 
+        opacity: 0; 
+    }
+    50% { 
+        transform: scale(1.05) translateY(-5px) rotate(1deg); 
+    }
+    100% { 
+        transform: scale(1) translateY(0) rotate(0deg); 
+        opacity: 1; 
+    }
+}
+
+/* Spaceship ambient lighting effects */
+.gradio-container {
+    animation: ambient-lighting 8s ease-in-out infinite !important;
+}
+
+@keyframes ambient-lighting {
+    0%, 100% { 
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(0, 100, 255, 0.1), transparent 40%),
+            radial-gradient(circle at 80% 70%, rgba(0, 255, 150, 0.1), transparent 40%),
+            linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 25%, #16213e 50%, #0f1419 75%, #000000 100%);
+    }
+    25% { 
+        background: 
+            radial-gradient(circle at 30% 20%, rgba(0, 150, 255, 0.12), transparent 40%),
+            radial-gradient(circle at 70% 80%, rgba(0, 255, 100, 0.12), transparent 40%),
+            linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 25%, #16213e 50%, #0f1419 75%, #000000 100%);
+    }
+    50% { 
+        background: 
+            radial-gradient(circle at 80% 30%, rgba(0, 200, 255, 0.08), transparent 40%),
+            radial-gradient(circle at 20% 70%, rgba(0, 255, 200, 0.08), transparent 40%),
+            linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 25%, #16213e 50%, #0f1419 75%, #000000 100%);
+    }
+    75% { 
+        background: 
+            radial-gradient(circle at 70% 20%, rgba(0, 120, 255, 0.1), transparent 40%),
+            radial-gradient(circle at 30% 80%, rgba(0, 255, 120, 0.1), transparent 40%),
+            linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 25%, #16213e 50%, #0f1419 75%, #000000 100%);
+    }
 }
 """
 
@@ -581,7 +812,7 @@ def inject_ufos():
     </div>
     """
 
-# Functions for different features
+# Functions for different features remain the same
 def start_tutor():
     return {
         page_1: gr.update(visible=False),
@@ -626,11 +857,9 @@ def ask_ai_tutor(question):
     if not question.strip():
         return "⚠️ ERROR: Please enter a question to receive wisdom from the AI Oracle!"
 
-    # Add XP for asking questions
     add_xp(10)
     user_stats["questions_solved"] += 1
 
-    # System prompt for the AI Oracle
     system_prompt = """You are the AI Oracle, a wise and powerful tutor with a retro gaming personality. 
     
     IMPORTANT GUIDELINES:
@@ -642,13 +871,10 @@ def ask_ai_tutor(question):
     - Use bullet points and clear structure when explaining concepts
     - Add motivational gaming elements"""
 
-    # Create the prompt
     prompt = f"A student asks: '{question}'\n\nProvide a helpful educational response in your retro gaming AI Oracle style. The student just gained +10 XP and is now Level {user_stats['level']} with {user_stats['xp']} total XP."
 
-    # Get AI response
     ai_response = call_nvidia_api(prompt, system_prompt)
 
-    # Add XP info if not already included
     if "XP" not in ai_response and "Level" not in ai_response:
         ai_response += f"\n\n🎮 **+10 XP GAINED!** | Level: {user_stats['level']} | Total XP: {user_stats['xp']}"
 
@@ -657,10 +883,11 @@ def ask_ai_tutor(question):
 def generate_practice():
     add_xp(15)
 
-    system_prompt = """You are a Training Mode AI that generates practice questions and exercises. 
-    Use retro gaming style with headers like "🎯 TRAINING MODE ACTIVATED", "⚔️ DRILL SEQUENCE", "🔥 CHALLENGE PROTOCOL".
+    system_prompt = """You are GRIND GLITCH Training Mode AI that generates practice questions and exercises. 
+    Use retro space-gaming style with headers like "🎯 TRAINING PODS ACTIVATED", "⚔️ COSMIC DRILL SEQUENCE", "🔥 STELLAR CHALLENGE PROTOCOL".
     Generate 3-4 practice questions on random educational topics (math, science, language, etc.).
-    Keep the gaming theme and end with XP information."""
+    Keep the cosmic gaming theme and remember: we're here to help because users deserve the best education.
+    End with XP information."""
 
     prompt = f"Generate a training session with practice questions. The student just gained +15 XP and is now Level {user_stats['level']} with {user_stats['xp']} total XP."
 
@@ -678,15 +905,15 @@ def create_lesson(topic):
     add_xp(25)
     user_stats["lessons_completed"] += 1
 
-    system_prompt = """You are the Knowledge Forge AI, a lesson builder with retro gaming personality.
-    Use headers like "🏗️ KNOWLEDGE FORGE ACTIVATED", "📚 LESSON CONSTRUCTION IN PROGRESS".
+    system_prompt = """You are GRIND GLITCH Knowledge Forge AI, a cosmic lesson builder with retro space-gaming personality.
+    Use headers like "🏗️ STELLAR KNOWLEDGE FORGE ACTIVATED", "📚 GALACTIC LESSON CONSTRUCTION INITIATED".
     Create a comprehensive lesson outline for the given topic including:
     - Introduction/Overview
     - Key concepts and definitions
     - Examples and applications
     - Practice exercises
     - Summary and next steps
-    Maintain the retro gaming theme throughout."""
+    Maintain the cosmic gaming theme and remember: we're here to help because you deserve the universe's best education."""
 
     prompt = f"Create a comprehensive lesson on the topic: '{topic}'. The student just gained +25 XP, completed {user_stats['lessons_completed']} lessons, and is now Level {user_stats['level']} with {user_stats['xp']} total XP."
 
@@ -703,14 +930,14 @@ def create_questions(subject):
 
     add_xp(20)
 
-    system_prompt = """You are the Challenge Creator AI with retro gaming personality.
-    Use headers like "🎲 CHALLENGE CREATOR ONLINE", "🎯 QUESTION BANK GENERATED".
+    system_prompt = """You are GRIND GLITCH Challenge Creator AI with retro space-gaming personality.
+    Use headers like "🎲 COSMIC CHALLENGE CREATOR ONLINE", "🎯 STELLAR QUESTION BANK GENERATED".
     Create a variety of questions for the given subject across different difficulty levels:
     - Easy (multiple choice, basic concepts)
-    - Medium (short answer, applications)
+    - Medium (short answer, applications)  
     - Hard (essay, analysis, problem-solving)
     - Expert (research, creative applications)
-    Maintain the gaming theme and provide sample questions for each level."""
+    Maintain the cosmic gaming theme and remember: we're here to help because you deserve the best education in the galaxy."""
 
     prompt = f"Generate practice questions for the subject: '{subject}'. Create questions across different difficulty levels. The student just gained +20 XP and is now Level {user_stats['level']} with {user_stats['xp']} total XP."
 
@@ -722,95 +949,98 @@ def create_questions(subject):
     return ai_response
 
 def get_stats():
-    return f"**🎮 PLAYER STATS** \n\n**🏆 LEVEL:** {user_stats['level']} \n**⭐ TOTAL XP:** {user_stats['xp']} \n**🧠 QUESTIONS SOLVED:** {user_stats['questions_solved']} \n**📚 LESSONS COMPLETED:** {user_stats['lessons_completed']} \n\n**🚀 NEXT LEVEL:** {(user_stats['level'] * 100) - user_stats['xp']} XP remaining"
+    return f"** SHIP STATUS** \n\n** COMMANDER LEVEL:** {user_stats['level']} \n** TOTAL XP:** {user_stats['xp']} \n** MISSIONS COMPLETED:** {user_stats['questions_solved']} \n** KNOWLEDGE MODULES:** {user_stats['lessons_completed']} \n\n** NEXT RANK:** {(user_stats['level'] * 100) - user_stats['xp']} XP to promotion"
 
 # Create the Gradio interface
-with gr.Blocks(css=custom_css, title="RETRO AI TUTOR") as demo:
+with gr.Blocks(css=custom_css, title="GRIND GLITCH - INTERSTELLAR LEARNING COMMAND") as demo:
 
     # Add UFO HTML elements
     gr.HTML(inject_ufos())
 
     # Page 1: Landing Page
     with gr.Column(visible=True) as page_1:
-        gr.Markdown("# RETRO AI TUTOR")
-        gr.Markdown("### INITIALIZE LEARNING PROTOCOL")
-        gr.Markdown("*Your personal AI learning companion with retro gaming vibes*")
-        gr.Markdown("*Powered by NVIDIA Llama AI*")
+        gr.Markdown("# GRIND GLITCH")
+        gr.Markdown("### INTERSTELLAR LEARNING PROTOCOL ACTIVATED")
+        gr.Markdown("*Cosmic support for stellar minds - because you deserve the universe's best education*")
+        gr.Markdown("*From distant galaxies, we're here to help you achieve greatness*")
+        gr.Markdown("*Powered by NVIDIA Llama AI Core*")
 
-        start_btn = gr.Button("ACTIVATE TUTOR", elem_classes=["start-button"], variant="primary")
+        start_btn = gr.Button("ACTIVATE GRIND GLITCH", elem_classes=["start-button"], variant="primary")
 
     # Page 2: Main Menu
     with gr.Column(visible=False) as page_2:
-        gr.Markdown("## LEARNING COMMAND CENTER")
-        gr.Markdown("### Choose your learning adventure!")
+        gr.Markdown("## GRIND GLITCH COMMAND CENTER")
+        gr.Markdown("### Navigate your learning journey across the cosmos!")
+        gr.Markdown("*We're here to help you reach the stars - you deserve stellar education*")
 
         # Stats display
         stats_display = gr.Markdown(get_stats(), elem_classes=["stats-container"])
 
         with gr.Row():
             with gr.Column():
-                oracle_btn = gr.Button("ASK THE ORACLE\n*Get AI-powered answers*", variant="primary")
-                training_btn = gr.Button("TRAINING MODE\n*Practice questions & drills*", variant="primary")
+                oracle_btn = gr.Button("COSMIC ORACLE\n*Stellar answers from across the galaxy*", variant="primary")
+                training_btn = gr.Button("STELLAR TRAINING\n*Because you deserve the best preparation*", variant="primary")
             with gr.Column():
-                lesson_btn = gr.Button("KNOWLEDGE FORGE\n*Generate custom lessons*", variant="primary")
-                challenge_btn = gr.Button("CHALLENGE CREATOR\n*Build practice questions*", variant="primary")
+                lesson_btn = gr.Button("KNOWLEDGE FORGE\n*Universe-class custom lessons*", variant="primary")
+                challenge_btn = gr.Button(" COSMIC CHALLENGES\n*Galactic-level practice questions*", variant="primary")
 
-        back_btn = gr.Button("RETURN TO START", variant="secondary")
+        back_btn = gr.Button("MAIN CONSOLE", variant="secondary")
 
     # Ask Oracle Page
     with gr.Column(visible=False) as ask_oracle_page:
-        gr.Markdown("## 🔮 AI ORACLE CHAMBER")
-        gr.Markdown("### Ask any question and receive wisdom from the AI!")
+        gr.Markdown("## 🔮 GRIND GLITCH ORACLE CHAMBER")
+        gr.Markdown("### Accessing cosmic knowledge database...")
+        gr.Markdown("*We're here to help - ask anything, you deserve stellar answers*")
 
         question_input = gr.Textbox(
-            label="Your Question:",
-            placeholder="Enter your question here...",
+            label="Query Input:",
+            placeholder="Enter your question for the Oracle...",
             lines=3
         )
-        ask_btn = gr.Button("CONSULT ORACLE", variant="primary")
+        ask_btn = gr.Button("TRANSMIT QUERY", variant="primary")
         oracle_output = gr.Markdown("", elem_classes=["output-text"])
 
-        back_oracle_btn = gr.Button("BACK TO MENU", variant="secondary")
+        back_oracle_btn = gr.Button("RETURN TO COMMAND CENTER", variant="secondary")
 
     # Training Mode Page
     with gr.Column(visible=False) as training_page:
-        gr.Markdown("## 🎯 TRAINING CHAMBER")
-        gr.Markdown("### Sharpen your skills with AI-generated practice questions!")
+        gr.Markdown("## 🎯 GRIND GLITCH TRAINING BAY")
+        gr.Markdown("### Stellar practice sessions - because you deserve the best preparation!")
 
-        generate_btn = gr.Button("GENERATE PRACTICE SET", variant="primary")
+        generate_btn = gr.Button("INITIATE COSMIC TRAINING", variant="primary")
         training_output = gr.Markdown("", elem_classes=["output-text"])
 
-        back_training_btn = gr.Button("BACK TO MENU", variant="secondary")
+        back_training_btn = gr.Button("RETURN TO COMMAND CENTER", variant="secondary")
 
     # Lesson Builder Page
     with gr.Column(visible=False) as lesson_page:
-        gr.Markdown("## 🏗️ KNOWLEDGE FORGE")
-        gr.Markdown("### Create comprehensive AI-powered lessons on any topic!")
+        gr.Markdown("## 🏗️ GRIND GLITCH KNOWLEDGE FORGE")
+        gr.Markdown("### Crafting galactic wisdom - you deserve universe-class education!")
 
         topic_input = gr.Textbox(
-            label="Lesson Topic:",
-            placeholder="Enter the topic you want to learn about...",
+            label="Learning Module Topic:",
+            placeholder="Enter the subject for cosmic knowledge synthesis...",
             lines=2
         )
-        lesson_btn = gr.Button("FORGE LESSON", variant="primary")
+        lesson_btn = gr.Button("FORGE STELLAR LESSON", variant="primary")
         lesson_output = gr.Markdown("", elem_classes=["output-text"])
 
-        back_lesson_btn = gr.Button("BACK TO MENU", variant="secondary")
+        back_lesson_btn = gr.Button("RETURN TO COMMAND CENTER", variant="secondary")
 
     # Challenge Creator Page
     with gr.Column(visible=False) as challenge_page:
-        gr.Markdown("## 🎲 CHALLENGE CREATOR")
-        gr.Markdown("### Generate AI-powered practice questions for any subject!")
+        gr.Markdown("## 🎲 GRIND GLITCH MISSION CREATOR")
+        gr.Markdown("### Generating cosmic challenges - because you deserve the best practice!")
 
         subject_input = gr.Textbox(
-            label="Subject:",
-            placeholder="Enter the subject for question generation...",
+            label="Challenge Parameters:",
+            placeholder="Enter subject area for stellar challenge generation...",
             lines=2
         )
-        create_btn = gr.Button("CREATE CHALLENGES", variant="primary")
+        create_btn = gr.Button("DEPLOY COSMIC CHALLENGES", variant="primary")
         challenge_output = gr.Markdown("", elem_classes=["output-text"])
 
-        back_challenge_btn = gr.Button("BACK TO MENU", variant="secondary")
+        back_challenge_btn = gr.Button("RETURN TO COMMAND CENTER", variant="secondary")
 
     # Event handlers
     start_btn.click(start_tutor, outputs=[page_1, page_2])
